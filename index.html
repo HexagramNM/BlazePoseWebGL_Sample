@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>BodyPixWebGL_sample</title>
+  <!-- Require the peer dependencies of pose-detection. -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+
+  <!-- You must explicitly require a TF.js backend if you're not using the TF.js union bundle. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+
+  <script type="text/javascript" src="blazePosePart.js"></script>
+  <script type="text/javascript" src="minMatrix.js"></script>
+  <script type="text/javascript" src="webGLPart.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+  <script id="vshader" type="x-shader/x-vertex">
+  		attribute vec3 position;
+  		attribute vec4 color;
+  		attribute vec2 textureCoord;
+  		uniform mat4 mvpMatrix;
+      uniform float pointSize;
+  		varying vec4 vColor;
+  		varying vec2 vTextureCoord;
+  		void main(void) {
+  			vColor = color;
+  			vTextureCoord = textureCoord;
+  			gl_Position = mvpMatrix*vec4(position, 1.0);
+        gl_PointSize = pointSize;
+  		}
+  </script>
+  <script id="fshader" type="x-shader/x-fragment">
+  		precision mediump float;
+      uniform int enableTexture;
+  		uniform sampler2D texture;
+      uniform vec4 globalColor;
+  		varying vec4 vColor;
+  		varying vec2 vTextureCoord;
+  		void main(void) {
+        if (enableTexture != 0) {
+  			     vec4 smpColor = texture2D(texture, vTextureCoord);
+  			     gl_FragColor = vColor * smpColor * globalColor;
+        }
+        else {
+             gl_FragColor = vColor * globalColor;
+        }
+  		}
+  		</script>
+  </head>
+</head>
+<body onload="BlazePoseWebGL_main()" style="margin: 0; padding: 0; overflow: hidden">
+  <div id="easyInst" style="color: #FFFFFF">
+    クリックしてスタート<br>
+    ※起動後マイクとカメラの使用を許可してください。<br>
+  </div>
+  <div id="main">
+    <video id="video" style="display: none"></video>
+    <canvas id="intermediate" style="display: none"></canvas>
+    <canvas id="virtualBackTexture" style="display: none"></canvas>
+    <canvas id="output"></canvas>
+  </div>
+  <div id="elapsedTime" style="color: #FFFFFF; display: none">
+    BlazePose... <span id="elapsedTimeBlazePose">0.00</span>ms/frame, WebGL... <span id="elapsedTimeWebGL">0.00</span>ms/frame
+  </div>
+</body>
+</html>
