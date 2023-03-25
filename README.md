@@ -1,4 +1,7 @@
 # BlazePoseWebGL_sample
+※このリポジトリは古いものになります。
+[BlazePoseWebGL_sample2023](https://github.com/HexagramNM/BlazePoseWebGL_sample2023)でパフォーマンスを改善しました。
+
 [BlazePose](https://github.com/tensorflow/tfjs-models/tree/master/pose-detection)で背景マスクをした映像をWebGLのテクスチャとして流すサンプル
 
 [こんな感じ](https://hexagramnm.github.io/BlazePoseWebGL_sample/index.html)に動きます。背景マスクされたWebカメラ映像が少し奥行き方向に傾いた状態で表示されます。
